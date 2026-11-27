@@ -13,7 +13,7 @@ const {outputFiles: [app]} = await build({
 });
 const template = await readFile('src/index.html', 'utf8');
 const charts = await readFile('node_modules/echarts/dist/echarts.min.js', 'utf8');
-const art = await readFile('src/assets/tommy-garage.webp');
+const art = await readFile('src/assets/tommy-garage-wedding.webp');
 const noticeFiles = [
   'LICENSE',
   'node_modules/@zip.js/zip.js/LICENSE', 'node_modules/papaparse/LICENSE',
