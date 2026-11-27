@@ -1,0 +1,12 @@
+/node_modules/
+/dist/
+/data/
+*.zip
+*.csv
+*.gpx
+*.fit
+*.db
+*.sqlite*
+*.env
+*rides.json
+.DS_Store
