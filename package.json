@@ -1,12 +1,14 @@
 {
   "name": "tommy-garage",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test"
+    "package": "npm run build && node scripts/package.mjs",
+    "test": "node --test",
+    "test:browser": "node --test checks/offline.mjs"
   },
   "dependencies": {
     "@zip.js/zip.js": "2.25.0",
@@ -15,6 +17,7 @@
   },
   "devDependencies": {
     "esbuild": "0.28.2",
+    "playwright": "1.65.1",
     "tailwindcss": "3.4.16"
   }
 }
