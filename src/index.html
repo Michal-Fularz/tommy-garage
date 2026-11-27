@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Przebieg i statystyki Twoich rowerów z eksportu Stravy.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; connect-src data:; base-uri 'none'; form-action 'none'">
+  <title>Tommy’s Garage</title>
+  <!-- INLINE_CSS -->
+</head>
+<body>
+  <header class="garage-header">
+    <div class="garage-shell header-inner">
+      <div>
+        <div class="brand">Tommy’s Garage</div>
+        <div class="byline">Coach Tommy Random</div>
+      </div>
+      <div class="header-actions" id="dashboard-actions" hidden>
+        <button type="button" id="simple-view" aria-pressed="true">Przegląd</button>
+        <button type="button" id="detailed-view" aria-pressed="false">Szczegóły</button>
+        <button type="button" id="change-file" class="change-file">Zmień dane</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="garage-shell">
+    <section class="import-card" id="import-panel" aria-labelledby="import-title">
+      <div class="import-copy">
+        <h1 id="import-title">Ile jeździsz na każdym rowerze?</h1>
+        <p>Sprawdź dystans, czas jazdy i historię swojej floty na podstawie eksportu ze Stravy.</p>
+        <button type="button" class="primary" id="pick-file">Wybierz plik ze Stravy</button>
+        <p class="file-hint">ZIP ze Stravy, activities.csv lub plik JSON z Tommy’s Garage. Dane są odczytywane w przeglądarce.</p>
+        <div class="import-links">
+          <button type="button" id="load-demo">Wypróbuj demo</button>
+          <a href="https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#bulk-export" target="_blank" rel="noopener noreferrer">Jak pobrać dane ze Stravy?</a>
+        </div>
+      </div>
+      <img class="garage-art" src="__GARAGE_ART__" alt="Wąsaty Tommy w weselnym garniturze reguluje przerzutkę niebieskiego roweru" width="1200" height="800">
+    </section>
+    <input type="file" id="file-input" accept=".zip,.csv,.json" hidden>
+    <p id="import-status" class="import-status" role="status" aria-live="polite" hidden></p>
+
+    <section id="overview" class="overview" aria-labelledby="overview-title" hidden>
+      <div class="summary-heading">
+        <div>
+          <h1 id="overview-title" tabindex="-1">Twoja flota</h1>
+          <p id="source-name"></p>
+        </div>
+        <div id="date-range" class="date-range"></div>
+      </div>
+      <dl class="overview-kpis">
+        <div><dt>Dystans</dt><dd id="total-distance"></dd></div>
+        <div><dt>Czas jazdy</dt><dd id="total-hours"></dd></div>
+        <div><dt>Jazdy</dt><dd id="total-rides"></dd></div>
+      </dl>
+      <section class="bike-panel" aria-labelledby="bike-panel-title">
+        <h2 id="bike-panel-title">Dystans według roweru</h2>
+        <div class="garage-table-scroll">
+          <table class="garage-table">
+            <thead><tr><th scope="col">Rower</th><th scope="col">Dystans</th><th scope="col">Czas</th><th scope="col">Jazdy</th></tr></thead>
+            <tbody id="bike-rows"></tbody>
+          </table>
+        </div>
+        <p id="unassigned-note" hidden>Jazdy bez przypisanego roweru są wliczone do podsumowania.</p>
+      </section>
+    </section>
+    <div id="details" hidden></div>
+  </main>
+  <!-- INLINE_CHARTS -->
+  <!-- INLINE_APP -->
+</body>
+</html>

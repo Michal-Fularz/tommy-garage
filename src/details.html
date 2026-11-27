@@ -1,0 +1,386 @@
+<section class="details" aria-label="Szczegółowe statystyki">
+      <nav class="flex flex-wrap gap-2 p-1.5 bg-slate-900/80 rounded-xl border border-slate-800">
+        <button data-event="click" data-handler="switchTab" data-argument="tab-overview" id="btn-tab-overview" class="tab-btn active px-4 py-2 rounded-lg text-sm transition-all duration-150">🌟 Podsumowanie Całości</button>
+        <button data-event="click" data-handler="switchTab" data-argument="tab-years" id="btn-tab-years" class="tab-btn px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-all duration-150">📅 Przegląd Roczny</button>
+        <button data-event="click" data-handler="switchTab" data-argument="tab-bikes" id="btn-tab-bikes" class="tab-btn px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-all duration-150">🚲 Przegląd Rowerów</button>
+        <button data-event="click" data-handler="switchTab" data-argument="tab-dynamics" id="btn-tab-dynamics" class="tab-btn px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-all duration-150">⚡ Waty & Prędkość</button>
+        <button data-event="click" data-handler="switchTab" data-argument="tab-records" id="btn-tab-records" class="tab-btn px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition-all duration-150">📜 Rejestr Jazd</button>
+      </nav>
+
+    <!-- KPI Top Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="glass p-5 rounded-2xl border border-slate-800">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Łączny Przebieg</span>
+        <div class="text-3xl font-extrabold text-white mt-2" id="kpi-dist">0 km</div>
+        <div class="text-xs text-emerald-400 mt-1">Pełna historia tras (odometer)</div>
+      </div>
+      <div class="glass p-5 rounded-2xl border border-slate-800">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Czas w Siodle</span>
+        <div class="text-3xl font-extrabold text-white mt-2" id="kpi-hours">0 h</div>
+        <div class="text-xs text-blue-400 mt-1">Czysty czas kręcenia (moving)</div>
+      </div>
+      <div class="glass p-5 rounded-2xl border border-slate-800">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Liczba Treningów</span>
+        <div class="text-3xl font-extrabold text-white mt-2" id="kpi-rides">0</div>
+        <div class="text-xs text-purple-400 mt-1">Zarejestrowane jazdy</div>
+      </div>
+      <div class="glass p-5 rounded-2xl border border-slate-800">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Król Przebiegu</span>
+        <div class="text-xl font-bold text-emerald-400 mt-2 truncate" id="kpi-topbike">–</div>
+        <div class="text-xs text-slate-400 mt-1" id="kpi-topbike-sub">-</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: OVERVIEW                            -->
+    <!-- ========================================== -->
+    <div id="tab-overview" class="tab-content space-y-8">
+      <!-- Overview Charts Header with Metric Switcher -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white mb-0.5">Struktura i Ewolucja Floty</h2>
+          <p class="text-xs text-slate-400">Udział rowerów w przebiegu i historia floty</p>
+        </div>
+        <!-- Metric Toggle: km vs hours -->
+        <div class="flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800 text-xs">
+          <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold px-2">Jednostka:</span>
+          <button id="btn-ov-metric-km" data-event="click" data-handler="setOverviewMetric" data-argument="km" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white transition-all shadow-sm cursor-pointer">📏 Dystans (km)</button>
+          <button id="btn-ov-metric-hours" data-event="click" data-handler="setOverviewMetric" data-argument="hours" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer">⏱️ Czas (h)</button>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Donut Chart: Mileage / Time Share -->
+        <div class="lg:col-span-5 glass p-6 rounded-2xl border border-slate-800 flex flex-col">
+          <h2 class="text-lg font-bold text-white mb-1" id="ov-donut-title">Udział Rowerów w Kilometrach</h2>
+          <p class="text-xs text-slate-400 mb-4" id="ov-donut-sub">Procentowy podział łącznego dystansu całej floty</p>
+          <div id="chart-donut" class="w-full h-80 flex-grow"></div>
+        </div>
+
+        <!-- Stacked Bar: Evolution over Years -->
+        <div class="lg:col-span-7 glass p-6 rounded-2xl border border-slate-800 flex flex-col">
+          <h2 class="text-lg font-bold text-white mb-1" id="ov-stacked-title">Ewolucja floty w latach</h2>
+          <p class="text-xs text-slate-400 mb-4" id="ov-stacked-sub">Kilometry wykręcone rok po roku z podziałem na poszczególne maszyny</p>
+          <div id="chart-stacked-years" class="w-full h-80 flex-grow"></div>
+        </div>
+      </div>
+
+      <!-- Main Fleet Table -->
+      <div class="glass rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="p-6 border-b border-slate-800/80 flex justify-between items-center">
+          <div>
+            <h2 class="text-lg font-bold text-white">Zestawienie Zbiorcze Maszyn</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Kompletne dane: dystans, czas, prędkość, moc, tętno i wznios</p>
+          </div>
+          <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium">Baza zweryfikowana</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Rower</th>
+                <th class="py-3 px-4 text-right">Dystans (km)</th>
+                <th class="py-3 px-4 text-right">Czas (h)</th>
+                <th class="py-3 px-4 text-right">Jazdy</th>
+                <th class="py-3 px-4 text-right">Śr. Prędkość</th>
+                <th class="py-3 px-4 text-right">Śr. Moc (W)</th>
+                <th class="py-3 px-4 text-right">Śr. Tętno (HR)</th>
+                <th class="py-3 px-4 text-right">Wznios (m)</th>
+                <th class="py-3 px-4 text-center">Okres</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-table-body" class="divide-y divide-slate-800/60 text-slate-200">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: YEARLY EXPLORER                     -->
+    <!-- ========================================== -->
+    <div id="tab-years" class="tab-content hidden space-y-6">
+      <!-- Year Selector Pills -->
+      <div class="glass p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center gap-2" id="year-selector-pills">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Year KPI Header -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold" id="yr-kpi-title">Podsumowanie Roku</span>
+          <div class="text-3xl font-extrabold text-emerald-400 mt-2" id="yr-kpi-dist">0 km</div>
+          <div class="text-xs text-slate-400 mt-1" id="yr-kpi-sub">0 h | 0 jazd</div>
+        </div>
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Główny Koń Pociągowy</span>
+          <div class="text-2xl font-bold text-white mt-2 truncate" id="yr-kpi-topbike">-</div>
+          <div class="text-xs text-slate-400 mt-1" id="yr-kpi-topbike-dist">-</div>
+        </div>
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Średnia Prędkość Roku</span>
+          <div class="text-3xl font-extrabold text-cyan-400 mt-2" id="yr-kpi-speed">0 km/h</div>
+          <div class="text-xs text-slate-400 mt-1">Na wszystkich maszynach</div>
+        </div>
+      </div>
+
+      <!-- Monthly Breakdown Chart for Selected Year -->
+      <div class="glass p-6 rounded-2xl border border-slate-800">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white mb-0.5" id="yr-chart-title">Przebieg Miesiąc po Miesiącu</h2>
+            <p class="text-xs text-slate-400" id="yr-chart-sub">Rozkład kilometrów na rowery w ciągu wybranego roku</p>
+          </div>
+          <!-- Metric Toggle for Year Monthly Chart -->
+          <div class="flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800 text-xs">
+            <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold px-2">Jednostka:</span>
+            <button id="btn-yr-metric-km" data-event="click" data-handler="setYearMetric" data-argument="km" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white transition-all shadow-sm cursor-pointer">📏 km</button>
+            <button id="btn-yr-metric-hours" data-event="click" data-handler="setYearMetric" data-argument="hours" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer">⏱️ h</button>
+          </div>
+        </div>
+        <div id="chart-yearly-monthly" class="w-full h-80"></div>
+      </div>
+
+      <!-- Selected Year Table -->
+      <div class="glass rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="p-5 border-b border-slate-800">
+          <h2 class="text-base font-bold text-white" id="yr-table-title">Rowery Użyte w Danym Roku</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Rower</th>
+                <th class="py-3 px-4 text-right">Dystans (km)</th>
+                <th class="py-3 px-4 text-right">Czas (h)</th>
+                <th class="py-3 px-4 text-right">Jazdy</th>
+                <th class="py-3 px-4 text-right">Śr. Prędkość</th>
+                <th class="py-3 px-4 text-right">Śr. Moc (W)</th>
+                <th class="py-3 px-4 text-right">Śr. Tętno (HR)</th>
+                <th class="py-3 px-4 text-right">Wznios (m)</th>
+              </tr>
+            </thead>
+            <tbody id="year-table-body" class="divide-y divide-slate-800/60 text-slate-200">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB: BIKE EXPLORER (PRZEGLĄD ROWERÓW)      -->
+    <!-- ========================================== -->
+    <div id="tab-bikes" class="tab-content hidden space-y-6">
+      <!-- Bike Selector Pills -->
+      <div class="glass p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center gap-2" id="bike-selector-pills">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Bike KPI Header Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold" id="bk-kpi-title">Łączny Przebieg</span>
+          <div class="text-3xl font-extrabold text-emerald-400 mt-2" id="bk-kpi-dist">0 km</div>
+          <div class="text-xs text-slate-400 mt-1" id="bk-kpi-sub">0 h | 0 jazd</div>
+        </div>
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Średnia Prędkość & Moc</span>
+          <div class="text-3xl font-extrabold text-cyan-400 mt-2" id="bk-kpi-speed">0 km/h</div>
+          <div class="text-xs text-slate-400 mt-1" id="bk-kpi-power">-</div>
+        </div>
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Wznios i Profil</span>
+          <div class="text-3xl font-extrabold text-amber-400 mt-2" id="bk-kpi-elev">0 m</div>
+          <div class="text-xs text-slate-400 mt-1" id="bk-kpi-elev-sub">-</div>
+        </div>
+        <div class="glass p-5 rounded-2xl border border-slate-800">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Okres Eksploatacji</span>
+          <div class="text-2xl font-bold text-white mt-2" id="bk-kpi-years">-</div>
+          <div class="text-xs text-slate-400 mt-1" id="bk-kpi-record">-</div>
+        </div>
+      </div>
+
+      <!-- Main Chart with Yearly / Monthly / Seasonality Mode Switcher -->
+      <div class="glass p-6 rounded-2xl border border-slate-800">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white mb-0.5" id="bk-chart-title">Przebieg Maszyny w Czasie</h2>
+            <p class="text-xs text-slate-400" id="bk-chart-subtitle">Ciągła oś czasu miesiąc po miesiącu (z uwzględnieniem miesięcy o zerowym przebiegu)</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Time Scope Switcher -->
+            <div id="bk-scope-container" class="flex items-center gap-1 p-1 bg-slate-900/90 rounded-xl border border-slate-800 text-xs">
+              <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold px-2">Zakres:</span>
+              <button id="btn-bk-scope-active" data-event="click" data-handler="setBikeTimeScope" data-argument="active" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white transition-all shadow-sm cursor-pointer" title="Pokaż od wejścia roweru do floty (z zachowaniem wszystkich miesięcy/lat 0 km)">Od zakupu roweru</button>
+              <button id="btn-bk-scope-full" data-event="click" data-handler="setBikeTimeScope" data-argument="full" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer" title="Pokaż pełną historię całej floty">Pełna historia</button>
+            </div>
+
+            <!-- Mode Toggle Buttons -->
+            <div class="flex items-center gap-1.5 p-1 bg-slate-900 rounded-xl border border-slate-800">
+              <button id="btn-bk-mode-yearly" data-event="click" data-handler="setBikeChartMode" data-argument="yearly" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer">📅 Roczny (Trendy)</button>
+              <button id="btn-bk-mode-monthly" data-event="click" data-handler="setBikeChartMode" data-argument="monthly" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white transition-all shadow-md shadow-emerald-500/30 cursor-pointer">📊 Miesiąc po Miesiącu</button>
+              <button id="btn-bk-mode-seasonality" data-event="click" data-handler="setBikeChartMode" data-argument="seasonality" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer">☀️ Rozkład Sty–Gru</button>
+            </div>
+
+            <!-- Metric Toggle Buttons (km vs hours) -->
+            <div class="flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800 text-xs">
+              <span class="text-[11px] uppercase tracking-wider text-slate-500 font-bold px-2">Jednostka:</span>
+              <button id="btn-bk-metric-km" data-event="click" data-handler="setBikeMetric" data-argument="km" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white transition-all shadow-sm cursor-pointer">📏 km</button>
+              <button id="btn-bk-metric-hours" data-event="click" data-handler="setBikeMetric" data-argument="hours" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition-all cursor-pointer">⏱️ h</button>
+            </div>
+          </div>
+        </div>
+        <div id="chart-bike-dynamic" class="w-full h-80"></div>
+      </div>
+
+      <!-- Grid: Yearly Breakdown Table & Top Rides -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Yearly Breakdown Table (7 cols) -->
+        <div class="lg:col-span-7 glass rounded-2xl border border-slate-800 overflow-hidden">
+          <div class="p-5 border-b border-slate-800">
+            <h2 class="text-base font-bold text-white" id="bk-table-title">Historia Rok po Roku</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider">
+                  <th class="py-3 px-4">Rok</th>
+                  <th class="py-3 px-4 text-right">Dystans (km)</th>
+                  <th class="py-3 px-4 text-right">Czas (h)</th>
+                  <th class="py-3 px-4 text-right">Jazdy</th>
+                  <th class="py-3 px-4 text-right">Śr. km/h</th>
+                  <th class="py-3 px-4 text-right">Moc</th>
+                  <th class="py-3 px-4 text-right">HR</th>
+                  <th class="py-3 px-4 text-right">Wznios</th>
+                  <th class="py-3 px-4 text-right">Udział</th>
+                </tr>
+              </thead>
+              <tbody id="bk-yearly-table-body" class="divide-y divide-slate-800/60 text-slate-200">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top Records Card (5 cols) -->
+        <div class="lg:col-span-5 glass rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between">
+          <div>
+            <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <div>
+                <h2 class="text-base font-bold text-white flex items-center gap-1.5">
+                  <span>🏆 Rekordowe Jazdy</span>
+                </h2>
+                <span id="bk-rec-sub" class="text-xs text-slate-400">Top 5 najdłuższych dystansów</span>
+              </div>
+              <div class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+                <button id="bk-btn-dist" data-event="click" data-handler="setBikeRecordMode" data-argument="dist" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-emerald-500 text-white shadow-sm cursor-pointer">📏 Dystans</button>
+                <button id="bk-btn-speed" data-event="click" data-handler="setBikeRecordMode" data-argument="speed" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white cursor-pointer">⚡ Prędkość</button>
+                <button id="bk-btn-power" data-event="click" data-handler="setBikeRecordMode" data-argument="power" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all text-slate-400 hover:text-white cursor-pointer">🔥 Moc NP</button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr id="bk-top-rides-thead" class="bg-slate-900/60 text-slate-400 border-b border-slate-800 uppercase tracking-wider">
+                    <!-- Rendered via JS -->
+                  </tr>
+                </thead>
+                <tbody id="bk-top-rides-body" class="divide-y divide-slate-800/60 text-slate-300">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="p-4 border-t border-slate-800 bg-slate-900/40 text-right">
+            <button data-event="click" data-handler="goToRidesWithBike" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition-colors cursor-pointer">
+              Zobacz wszystkie jazdy w Rejestrze &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: DYNAMICS & COMPARISON               -->
+    <!-- ========================================== -->
+    <div id="tab-dynamics" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Scatter: Speed vs Power -->
+        <div class="glass p-6 rounded-2xl border border-slate-800">
+          <h2 class="text-lg font-bold text-white mb-1">Średnia Prędkość vs Średnia Moc</h2>
+          <p class="text-xs text-slate-400 mb-4">Wielkość bąbelka odpowiada łącznemu przebiegowi maszyny</p>
+          <div id="chart-scatter-power" class="w-full h-80"></div>
+        </div>
+
+        <!-- Bar: Elevation per 100km -->
+        <div class="glass p-6 rounded-2xl border border-slate-800">
+          <h2 class="text-lg font-bold text-white mb-1">Górzystość Tras (Pion na 100 km)</h2>
+          <p class="text-xs text-slate-400 mb-4">Gdzie maszyna widziała najwięcej wzniosu (metry w górę na każde 100 km)</p>
+          <div id="chart-elev-density" class="w-full h-80"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: COMPLETE RIDES LOG                  -->
+    <!-- ========================================== -->
+    <div id="tab-records" class="tab-content hidden space-y-4">
+      <div class="glass p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="text-base font-bold text-white">Rejestr Jazd</h2>
+            <span id="rides-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-medium">Ładowanie...</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Kompletny wykaz aktywności z filtrowaniem po roku, rowerze i nazwie</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <!-- Year Selector -->
+          <div class="flex items-center gap-2">
+            <label for="rides-year-select" class="text-xs text-slate-400 font-medium">Rok:</label>
+            <select id="rides-year-select" data-event="change" data-handler="filterRidesTable" class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+              <!-- Rendered via JS -->
+            </select>
+          </div>
+          <!-- Bike Selector -->
+          <div class="flex items-center gap-2">
+            <label for="rides-bike-select" class="text-xs text-slate-400 font-medium">Rower:</label>
+            <select id="rides-bike-select" data-event="change" data-handler="filterRidesTable" class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-emerald-500 max-w-[200px] truncate cursor-pointer">
+              <!-- Rendered via JS -->
+            </select>
+          </div>
+          <!-- Text Search -->
+          <div class="w-full sm:w-56">
+            <input type="text" id="rides-search" data-event="input" data-handler="filterRidesTable" placeholder="Szukaj w nazwie..." class="w-full bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead class="sticky top-0 z-10">
+              <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider">
+                <th class="py-3 px-4">Data</th>
+                <th class="py-3 px-4">Nazwa treningu</th>
+                <th class="py-3 px-4">Rower</th>
+                <th class="py-3 px-4 text-right">Dystans</th>
+                <th class="py-3 px-4 text-right">Czas</th>
+                <th class="py-3 px-4 text-right">Śr. km/h</th>
+                <th class="py-3 px-4 text-right">Moc</th>
+                <th class="py-3 px-4 text-right">HR</th>
+                <th class="py-3 px-4 text-right">Wznios</th>
+              </tr>
+            </thead>
+            <tbody id="rides-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</section>
