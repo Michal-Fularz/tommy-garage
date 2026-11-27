@@ -1,6 +1,6 @@
 # Tommy’s Garage
 
-Bike fleet stats by Coach Tommy Random. The Polish dashboard runs offline in your browser. [User guide](docs/USER_GUIDE.md)
+Bike fleet stats by Coach Tommy Random. The Polish dashboard runs offline in your browser. [User guide](docs/USER_GUIDE.md) · [Developer guide](docs/DEVELOPMENT.md)
 
 ![Tommy’s Garage fleet totals and annual charts with demo data](docs/dashboard-preview.webp)
 
