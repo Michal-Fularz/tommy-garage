@@ -2,6 +2,8 @@
 
 Bike fleet stats by Coach Tommy Random. The Polish dashboard runs offline in your browser.
 
+![Tommy’s Garage fleet totals and annual charts with demo data](docs/dashboard-preview.webp)
+
 ## Use it
 
 Open [Tommy’s Garage](https://michal-fularz.github.io/tommy-garage/) or the built `dist/index.html`. Choose **Wybierz plik ze Stravy** and select a Strava ZIP or `activities.csv`. **Wypróbuj demo** opens sample rides. [Get your Strava export](https://support.strava.com/hc/en-us/articles/216918437-Exporting-your-Data-and-Bulk-Export#bulk-export)
